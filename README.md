@@ -1,0 +1,40 @@
+# Wappalyzergo
+
+
+### Using *go install*
+
+```sh
+go install -v github.com/ksecurity45/wappalyzergo/cmd/update-fingerprints@latest
+```
+
+After this command *wappalyzergo* library source will be in your current go.mod.
+
+## Example
+Usage Example:
+
+``` go
+package main
+
+import (
+	"fmt"
+	"io/ioutil"
+	"log"
+	"net/http"
+
+	wappalyzer "github.com/ksecurity45/wappalyzergo"
+)
+
+func main() {
+	resp, err := http.DefaultClient.Get("https://www.hackerone.com")
+	if err != nil {
+		log.Fatal(err)
+	}
+	data, _ := ioutil.ReadAll(resp.Body) // Ignoring error for example
+
+	wappalyzerClient, err := wappalyzer.New()
+	fingerprints := wappalyzerClient.Fingerprint(resp.Header, data)
+	fmt.Printf("%v\n", fingerprints)
+
+	// Output: map[Acquia Cloud Platform:{} Amazon EC2:{} Apache:{} Cloudflare:{} Drupal:{} PHP:{} Percona:{} React:{} Varnish:{}]
+}
+```
